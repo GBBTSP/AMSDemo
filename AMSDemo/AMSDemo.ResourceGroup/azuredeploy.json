@@ -1,8 +1,42 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {},
+  "parameters": {
+    "mediaServicesAccountName": { "type": "string" },
+    "storageAccountName": {"type": "string"}
+  },
   "variables": {},
-  "resources": [],
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2016-01-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "Storage",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Media/mediaServices",
+      "apiVersion": "2015-10-01",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('mediaServicesAccountName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ],
+      "properties": {
+        "storageAccounts": [
+          {
+            "isPrimary": true,
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          }
+        ]
+      }
+    }
+  ],
   "outputs": {}
 }
