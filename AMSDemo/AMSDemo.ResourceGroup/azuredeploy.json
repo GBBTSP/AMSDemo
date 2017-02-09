@@ -17,7 +17,6 @@
         "name": "Standard_LRS"
       },
       "properties": {
-        "accessTier": "Hot"
       }
     },
     {
